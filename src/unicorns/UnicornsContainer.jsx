@@ -1,136 +1,131 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
+import UnicornView from "./UnicornsView";
+
+const BASE_URL = "https://crudcrud.com/api/4cd481ecabd547e0b729e90bad63586b/unicorns";
 
 const UnicornContainer = () => {
     const [name, setName] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [searchUnicorn, setSearchUnicorn] = useState(false);
-    const [localUnicorn, setLocalUnicorn] = useState([])
+    const [searchUnicorn, setSearchUnicorn] = useState(true);
+    const [localUnicorn, setLocalUnicorn] = useState([]);
 
-    //GET, leer y listar los unicornios
     const getUnicorns = async () => {
+        setLoading(true);
         try {
-            const response = await fetch (`https://crudcrud.com/api/c8aa6911a19c4c56957fc91f64785811`, {
-                method: 'GET'
-            });
-            if (response.status === 200) {
+            const response = await fetch(BASE_URL);
+            if (response.ok) {
                 const data = await response.json();
-                setName(data) 
+                setName(data);
             } else {
                 setError(response.statusText);
             }
         } catch (e) {
-            console.log(e.message)
+            setError(e.message);
         } finally {
             setLoading(false);
-            setSearchUnicorn(false)
+            setSearchUnicorn(false);
         }
     };
 
     const addUnicorns = async (newUnicorn) => {
+        setLoading(true);
         try {
-            const response = await fetch (`https://crudcrud.com/api/c8aa6911a19c4c56957fc91f64785811`, {
+            const response = await fetch(BASE_URL, {
                 method: 'POST',
-                headers: {'Content-Type':'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newUnicorn)
             });
-            if (response.status === 200){
+
+            if (response.ok) {
                 const createdUnicorn = await response.json();
-                const updatedUnicorn = [... name, createdUnicorn];
-                setName(updatedUnicorn);
-                const updatedLocal = [... localUnicorn, createdUnicorn];
+
+                const updatedLocal = [...localUnicorn, createdUnicorn];
                 setLocalUnicorn(updatedLocal);
                 localStorage.setItem('createdUnicorns', JSON.stringify(updatedLocal));
-
-                console.log('Unicornio Creado!!')
+                console.log('Unicornio Creado!!');
             } else {
                 setError(response.statusText);
             }
         } catch (e) {
-            console.log(e.message)
+            setError(e.message);
         } finally {
             setLoading(false);
-            setSearchUnicorn(false)
+            setSearchUnicorn(false);
         }
     };
 
     const editUnicorns = async (id, updatedUnicorn) => {
+        setLoading(true);
         try {
-            const response = await fetch (`https://crudcrud.com/api/c8aa6911a19c4c56957fc91f64785811/${id}`, {
+            const response = await fetch(`${BASE_URL}/${id}`, {
                 method: 'PUT',
-                headers: {'Content-Type':'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedUnicorn)
             });
-            if (response.status === 200){
-                const updatedItem = await response.json();
-                const updatedLocal = localUnicorn.map(uni => 
-                    uni.id === id ? updatedItem : uni
+
+            if (response.ok) {
+                const updatedLocal = localUnicorn.map(uni =>
+                    uni._id === id ? { ...updatedUnicorn, _id: id } : uni
                 );
                 setLocalUnicorn(updatedLocal);
                 localStorage.setItem('createdUnicorns', JSON.stringify(updatedLocal));
-
-                console.log('Unicornio actualizado con exito!!!')
+                console.log('Unicornio actualizado!');
             } else {
                 setError(response.statusText);
             }
         } catch (e) {
-            console.log(e.message)
+            setError(e.message);
         } finally {
             setLoading(false);
-            setSearchUnicorn(false)
+            setSearchUnicorn(false);
         }
-    }
+    };
 
     const deleteUnicorns = async (id) => {
         try {
-            const response = await fetch (`https://crudcrud.com/api/c8aa6911a19c4c56957fc91f64785811/${id}`, {
-                method: ' DELETE' 
+            const response = await fetch(`${BASE_URL}/${id}`, {
+                method: 'DELETE'
             });
+
             if (response.ok) {
-                console.log('Unicornio eliminado :(')
-
-                const updateLocal = localUnicorn.filter(obj => obj.id !== id);
-
-                setLocalUnicorn(updateLocal);
-                
-                localStorage.setItem('createdUnicorns',  JSON.stringify(updateLocal))
-
+                const updated = localUnicorn.filter(u => u._id !== id);
+                setLocalUnicorn(updated);
+                localStorage.setItem('createdUnicorns', JSON.stringify(updated));
+                console.log('Unicornio eliminado');
             } else {
-                setError(response.statusText)
-            }                                                                   
-        } catch (error) {
-            console.error(error)
-        } 
-    }; 
+                setError(response.statusText);
+            }
+        } catch (e) {
+            setError(e.message);
+        }
+    };
 
     useEffect(() => {
         const saved = localStorage.getItem('createdUnicorns');
-
         if (saved) {
-            setLocalUnicorn(JSON.parse(saved))
+            setLocalUnicorn(JSON.parse(saved));
         }
     }, []);
 
-    useEffect (() => {
+    useEffect(() => {
         if (searchUnicorn) {
-            setLoading(true)
             getUnicorns();
         }
     }, [searchUnicorn]);
 
-    return(
-        <UnicornsView 
-        users={users} 
-        loading={loading} 
-        error={error} 
-        setSearchUnicorns={setSearchUnicorn}
-        createUnicorns={createUnicorn}
-        localUnicorns={localUnicorn}
-        editUnicorns={editUnicorns}
-        deleteUnicorns={deleteUnicorns}
+    return (
+        <UnicornView
+            names={name}
+            loading={loading}
+            error={error}
+            setSearchUnicorns={setSearchUnicorn}
+            createUnicorns={addUnicorns}
+            localUnicorns={localUnicorn}
+            editUnicorns={editUnicorns}
+            deleteUnicorns={deleteUnicorns}
         />
     );
-}
+};
 
-
-export default UnicornContainer
+export default UnicornContainer;
