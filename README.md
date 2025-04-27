@@ -2,7 +2,7 @@
 
 ### Cómo levantar el proyecto🤔
 - git clone https://github.com/milesivit/unicorniosIndividual.git
-- cd nombre-proyecto
+- cd unicorniosIndividual
 - npm install
 - npm run dev
 
