@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext } from "react";
 
 export const UnicornContext = createContext();
 
-const BASE_URL = 'https://crudcrud.com/api/f2181c09a7104e0caae7a906778728a8/unicorns'; 
+const BASE_URL = 'https://crudcrud.com/api/9752cc882def411aac98b1b4c223ac84/unicorns'; 
 
 export const UnicornProvider = ({ children }) => {
     const [unicorns, setUnicorns] = useState([]);
@@ -108,7 +108,6 @@ export const UnicornProvider = ({ children }) => {
     );
 };
 
-// Aquí exportamos useUnicornContext para que se pueda importar en otros componentes.
 export const useUnicornContext = () => {
     return useContext(UnicornContext);
 };

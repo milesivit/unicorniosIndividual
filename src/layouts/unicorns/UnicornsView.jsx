@@ -20,14 +20,12 @@ export default function UnicornsView() {
       {loading && <p>Cargando...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
-      {/* DataTable de PrimeReact */}
       <DataTable value={unicorns} paginator={false} className="p-datatable-sm p-shadow-2">
         <Column field="name" header="Nombre" />
         <Column field="age" header="Edad" />
         <Column field="color" header="Color" />
         <Column field="power" header="Poder" />
         
-        {/* Columna de acciones */}
         <Column 
           header="Acciones" 
           body={(rowData) => (

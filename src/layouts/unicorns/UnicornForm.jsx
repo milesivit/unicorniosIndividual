@@ -3,20 +3,20 @@ import * as Yup from 'yup';
 import { useUnicornContext } from "../../context/UnicornContext";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Button } from 'primereact/button'; // Importa el botón de PrimeReact
+import { Button } from 'primereact/button'; 
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Requerido'),
   age: Yup.number().positive('Debe ser mayor a 0').required('Requerido'),
   color: Yup.string().required('Requerido'),
-  power: Yup.string().required('Requerido'), // Añadido campo de poder
+  power: Yup.string().required('Requerido'), 
 });
 
 export default function UnicornForm() {
   const { unicorns, addUnicorn, editUnicorn } = useUnicornContext();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [initialValues, setInitialValues] = useState({ name: '', age: '', color:'', power: '' }); // Campo de poder añadido
+  const [initialValues, setInitialValues] = useState({ name: '', age: '', color:'', power: '' });
 
   const isEdit = Boolean(id);
 
@@ -24,7 +24,7 @@ export default function UnicornForm() {
     if (isEdit) {
       const unicorn = unicorns.find((u) => u._id === id);
       if (unicorn) {
-        setInitialValues({ name: unicorn.name, age: unicorn.age, color: unicorn.color, power: unicorn.power }); // Ajustar el valor inicial para 'power'
+        setInitialValues({ name: unicorn.name, age: unicorn.age, color: unicorn.color, power: unicorn.power });
       }
     }
   }, [id, unicorns]);
