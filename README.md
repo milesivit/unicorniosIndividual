@@ -14,7 +14,7 @@ npm install
 ```bash
 npm run dev
 ```
-4. Asegúrate de tener un endpoint único de `crudcrud.com` y reemplazarlo en `UnicornsContainer.jsx`
+4. Asegúrate de tener un endpoint único de `crudcrud.com` y reemplazarlo en `UnicornsContext.jsx`
 ---
 
 ## 🚀 Tecnologías Utilizadas
