@@ -1,12 +1,17 @@
 import { useUnicornContext } from '../../context/UnicornContext';
+import { exportToPDF } from '../../utils/ExportToPdf';
 import { Link } from 'react-router-dom';
 import { DataTable } from 'primereact/datatable';  
 import { Column } from 'primereact/column';        
-import { Button } from 'primereact/button';      
+import { Button } from 'primereact/button';   
 
 export default function UnicornsView() {
   const { unicorns, deleteUnicorn, loading, error } = useUnicornContext();
 
+  const handleExport = () => {
+    exportToPDF(unicorns, 'Unicornios', ['name', 'age', 'color', 'power']);
+  };
+  
   return (
     <div>
       <h2>🦄💖Lista de Unicornios💖🦄</h2>
@@ -16,6 +21,7 @@ export default function UnicornsView() {
       <Link to="/">
         <Button label="Volver al inicio" icon="pi pi-home" className="p-button-rounded p-button-success" />
       </Link>
+      <Button label="Exportar PDF" icon="pi pi-file-pdf" className="p-button-rounded p-button-warning" onClick={handleExport} />
 
       {loading && <p>Cargando...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}

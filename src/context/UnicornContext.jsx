@@ -1,8 +1,9 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import axios from 'axios';
 
 export const UnicornContext = createContext();
 
-const BASE_URL = 'https://crudcrud.com/api/9752cc882def411aac98b1b4c223ac84/unicorns'; 
+const BASE_URL = 'https://crudcrud.com/api/f6d183b4e8344afeb1f8158a3e76d99d/unicorns'; 
 
 export const UnicornProvider = ({ children }) => {
     const [unicorns, setUnicorns] = useState([]);
@@ -12,80 +13,50 @@ export const UnicornProvider = ({ children }) => {
     const getUnicorns = async () => {
         setLoading(true);
         try {
-            const response = await fetch(BASE_URL);
-            if (response.ok) {
-                const data = await response.json();
-                setUnicorns(data);
-            } else {
-                setError(response.statusText);
-            }
+            const { data } = await axios.get(BASE_URL);
+            setUnicorns(data);
         } catch (e) {
             setError(e.message);
         } finally {
             setLoading(false);
         }
     };
-
+    
     const addUnicorn = async (newUnicorn) => {
         setLoading(true);
         try {
-            const response = await fetch(BASE_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newUnicorn)
-            });
-
-            if (response.ok) {
-                const created = await response.json();
-                setUnicorns(prev => [...prev, created]);
-            } else {
-                setError(response.statusText);
-            }
+            const { data: created } = await axios.post(BASE_URL, newUnicorn);
+            setUnicorns(prev => [...prev, created]);
         } catch (e) {
             setError(e.message);
         } finally {
             setLoading(false);
         }
     };
-
+    
     const editUnicorn = async (id, updated) => {
         setLoading(true);
         try {
-            const response = await fetch(`${BASE_URL}/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updated)
-            });
-
-            if (response.ok) {
-                setUnicorns(prev =>
-                    prev.map(u => (u._id === id ? { ...updated, _id: id } : u))
-                );
-            } else {
-                setError(response.statusText);
-            }
+            await axios.put(`${BASE_URL}/${id}`, updated);
+            setUnicorns(prev =>
+                prev.map(u => (u._id === id ? { ...updated, _id: id } : u))
+            );
         } catch (e) {
             setError(e.message);
         } finally {
             setLoading(false);
         }
     };
-
+    
     const deleteUnicorn = async (id) => {
         try {
-            const response = await fetch(`${BASE_URL}/${id}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                setUnicorns(prev => prev.filter(u => u._id !== id));
-            } else {
-                setError(`Error: ${response.statusText}`);
-            }
+            await axios.delete(`${BASE_URL}/${id}`);
+            setUnicorns(prev => prev.filter(u => u._id !== id));
         } catch (e) {
-            setError(`Network error: ${e.message}`);
+            setError(e.message);
         }
     };
+    
 
     useEffect(() => {
         getUnicorns();
